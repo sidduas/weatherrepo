@@ -29,17 +29,18 @@ public class WeatherForecastRestController {
 
     @GetMapping("wetherreport")
     List<CustomReport> getWeatherReport(@RequestParam(value = "city", defaultValue = "Bangalore") String cityName) {
+        List<CustomReport> customReportList = new ArrayList<>();
         String report = weatherRestApi.getWeatherReport(cityName).getBody();
         System.out.println(report);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         WeatherReport weatherReport = gson.fromJson(report, WeatherReport.class);
-        List<CustomReport> customReportList = new ArrayList<>();
         List<list> listList = weatherReport.getList();
+
         for (list list : listList) {
             customReportList.add(getCustomReport(list));
         }
-        System.out.println(customReportList);
 
+        System.out.println(customReportList);
         return customReportList;
     }
 
@@ -64,7 +65,7 @@ public class WeatherForecastRestController {
     }
 
     private double tempInCelcius(String tempF) {
-        return ((Double.parseDouble(tempF) - 32) * 5) / 9;
+        return Double.parseDouble(tempF) - Double.parseDouble("273.15");
     }
 
     private String getDate(long epoc) {
