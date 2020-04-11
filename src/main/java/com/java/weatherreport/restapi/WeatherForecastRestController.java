@@ -24,8 +24,17 @@ public class WeatherForecastRestController {
     @GetMapping("wetherreport")
     List<CustomReport> getWeatherReport(@RequestParam(value = "city", defaultValue = "Bangalore") String cityName) {
         List<CustomReport> customReportList = new ArrayList<>();
+        String report = "";
         //Call third party API to get forecast details.
-        String report = weatherRestApi.getWeatherReport(cityName).getBody();
+        try {
+            report = weatherRestApi.getWeatherReport(cityName).getBody();
+        } catch (Exception e) {
+            CustomReport customReport = new CustomReport();
+            customReport.setAdviceMessage("City not Found");
+            customReportList.add(customReport);
+            return customReportList;
+        }
+
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         WeatherReport weatherReport = gson.fromJson(report, WeatherReport.class);
